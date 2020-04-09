@@ -1,0 +1,24 @@
+DROP TABLE MENU;
+DROP SEQUENCE MENU_seq;
+
+-- 메뉴 테이블 생성
+CREATE TABLE MENU(
+    orderdate date PRIMARY KEY,
+    menu1 VARCHAR2(30),
+    menu2 VARCHAR2(30),
+    menu3 VARCHAR2(30),
+    menu4 VARCHAR2(30),
+    menu5 VARCHAR2(30)
+);
+
+-- 메뉴 시퀀스 생성
+CREATE SEQUENCE MENU_seq;
+
+DROP TABLE ORDERLIST;
+DROP SEQUENCE ORDER_seq;
+-- 오더 테이블 생성
+CREATE TABLE ORDERLIST(
+    orderdate date PRIMARY KEY,
+    count NUMBER DEFAULT 0,
+    name VARCHAR2(30)
+);
