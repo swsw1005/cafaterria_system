@@ -12,11 +12,12 @@ public class Db {
     // 100|startDate|endDate // select menu (1 month)
     // 130|startDate|endDate // select count(*) orderList( 1month)
     // 150|orderDate // select orderlist 1day (AdminClient ONLY)
+    // 160|startDate|endDate|orderDate // 한달치 주문count + 특정일 주문내역
     // 200|orderDate|count|name // insert orderlist (UserClient ONLY)
     // 300|orderDate|name // delete orderlist (AdminClient ONLY)
+    // 400|id|pwd // select adminlist
 
     // HashTable<Integer, Object> ht = new Hashtable<>()
-Object oo = { }
 
     String queryString; // 실행할 쿼리
 
@@ -28,10 +29,12 @@ Object oo = { }
     String sql = "";
     ResultSet rs;
     // 값 담아서 나갈 변수
-    String[][] temp_menu = new String[31][6];// 100
+    Hashtable<Integer, String> ht100 = new Hashtable<>();// 100
     int[] temp_orderCnt = new int[31]; // 130
-    Vector<Integer> vec1 = new Vector<>(); // 150
-    Vector<String> vec2 = new Vector<>();// 150
+    Vector<Integer> vec150 = new Vector<>(); // 150
+    Vector<String> vec151 = new Vector<>();// 150
+    Hashtable<Integer, Object[]> ht1 = new Hashtable<>();
+    String hwal;// 400
 
     // 메소드
     public void queryString(String protocol) {
@@ -96,20 +99,26 @@ Object oo = { }
                     if (rs != null) {
                         int i = 0;
                         while (rs.next()) {
-                            temp_menu[i][0] = rs.getString("orderdate");
-                            temp_menu[i][1] = rs.getString("menu1");
-                            temp_menu[i][2] = rs.getString("menu2");
-                            temp_menu[i][3] = rs.getString("menu3");
-                            temp_menu[i][4] = rs.getString("menu4");
-                            temp_menu[i][5] = rs.getString("menu5");
+                            // String temp = rs.getString("menu1");
+                            // temp = temp + "\n" + rs.getString("menu2");
+                            // temp = temp + "\n" + rs.getString("menu3");
+                            // temp = temp + "\n" + rs.getString("menu4");
+                            // temp = temp + "\n" + rs.getString("menu5");
+                            String temp = "<html><span>" + rs.getString("menu1").trim();
+                            temp = temp + "<br>" + rs.getString("menu2").trim();
+                            temp = temp + "<br>" + rs.getString("menu3").trim();
+                            temp = temp + "<br>" + rs.getString("menu4").trim();
+                            temp = temp + "<br>" + rs.getString("menu5").trim();
+                            temp = temp + "</span></html>";
+
+                            ht100.put(i, temp);
                             i++;
                         }
                     }
-
                     break;
 
                 case 130: // select count(*) orderlist 1month (AdminClient ONLY)
-                    // 130:startDate|endDate
+                    // 130|startDate|endDate
 
                     System.out.println("130----");
                     int date130 = Integer.parseInt(token.nextToken());
@@ -148,9 +157,56 @@ Object oo = { }
                     if (rs != null) {
                         while (rs.next()) {
                             // temp = rs.getString("menu1");
-                            vec1.add(rs.getInt("count"));
-                            vec2.add(rs.getString("name"));
-                            System.out.printf("%d(%d) ", vec1.size(), vec2.size());
+                            vec150.add(rs.getInt("count"));
+                            vec151.add(rs.getString("name"));
+                            System.out.printf("%d(%d) ", vec150.size(), vec151.size());
+                        }
+                    }
+                    break;
+
+                case 160: // 130 + 150
+                    // 160|startDate|endDate|orderDate
+                    // 한달치 주문count + 특정일 주문내역
+                    System.out.println("160----");
+
+                    int date160 = Integer.parseInt(token.nextToken());// startdate
+                    int date161 = Integer.parseInt(token.nextToken());// enddate
+                    String date162 = token.nextToken();// orderdate
+
+                    System.out.println(date160);
+                    System.out.println(date161);
+                    System.out.println(date162);
+
+                    int d160161 = date161 - date160;
+
+                    for (int i = 0; i < d160161; i++) {
+
+                        String date_temp = (date160 + i) + "";
+
+                        date_temp = date_temp.substring(0, 4) + "-" + date_temp.substring(4, 6) + "-"
+                                + date_temp.substring(6, 8);
+
+                        sql = "select sum(count) from orderlist where orderdate='" + date_temp + "'";
+                        rs = stmt.executeQuery(sql);
+                        if (rs != null) {
+                            while (rs.next()) {
+                                temp_orderCnt[i] = rs.getInt(1);
+                                System.out.print(temp_orderCnt[i] + " ");
+                            }
+                        }
+                    }
+
+                    date162 = date162.substring(0, 4) + "-" + date162.substring(4, 6) + "-" + date162.substring(6, 8);
+
+                    sql = "select * from orderlist where orderDate = '" + date162 + "'";
+                    System.out.println(sql);
+                    rs = stmt.executeQuery(sql);
+                    if (rs != null) {
+                        while (rs.next()) {
+                            // temp = rs.getString("menu1");
+                            vec150.add(rs.getInt("count"));
+                            vec151.add(rs.getString("name"));
+                            System.out.printf("%d(%d) ", vec150.size(), vec151.size());
                         }
                     }
 
@@ -176,40 +232,46 @@ Object oo = { }
                     System.out.println();
                     System.out.println(sql);
                     System.out.println();
+
                     stmt.executeUpdate(sql);
 
-                    // try {
-
-                    // pstmt = con.prepareStatement(sql);
-                    // pstmt.setString(1, date200);
-                    // pstmt.setInt(2, count200);
-                    // pstmt.setString(3, text200);
-                    // System.out.println("200--입력 성공?");
-
-                    // } catch (SQLException e1) {
-                    // System.out.println("pstmt 하다가 오류...");
-                    // }
                     break;
 
                 case 300: // delete orderlist (AdminClient ONLY)
-                    // 300|orderDate|name
+                    // 300|no
 
-                    String date300 = token.nextToken();
-                    date300 = date300.substring(0, 4) + "-" + date300.substring(4, 6) + "-" + date300.substring(6, 8);
-                    String name300 = token.nextToken();
+                    int no300 = Integer.parseInt(token.nextToken());
 
-                    sql = "delete from orderlist where date=? and ";
+                    sql = "delete orderlist where no='" + no300 + "'";
 
-                    // delete board where no = 2047;
+                    System.out.println();
+                    System.out.println(sql);
+                    System.out.println();
 
-                    try {
-                        pstmt = con.prepareStatement(sql);
-                        pstmt.setString(1, name300);
-                    } catch (SQLException e1) {
-                        System.out.println("pstmt 하다가 오류...");
-                    }
+                    stmt.executeUpdate(sql);
+
                     break;
 
+                case 400: // select state from adminlist where id = id and pw = pw;
+                    // 400|id|pwd
+
+                    String adminId = token.nextToken();
+                    String adminPw = token.nextToken();
+
+                    sql = "select state from adminlist where id='" + adminId + "' and pw='" + adminPw + "'";
+
+                    System.out.println(sql);
+
+                    rs = stmt.executeQuery(sql);
+
+                    if (rs != null) {
+                        while (rs.next()) {
+                            String status = rs.getString("state");
+                            System.out.println("status : " + status);
+                        }
+                    }
+
+                    break;
                 default:
                     break;
             }

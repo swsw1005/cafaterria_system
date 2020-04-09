@@ -8,6 +8,7 @@ package app;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.Calendar;
 
 public class MainClient extends JFrame implements ActionListener {
 
@@ -90,7 +91,7 @@ public class MainClient extends JFrame implements ActionListener {
             System.out.println("b_user click");
             tf_id.setText("");
             tf_pw.setText("");
-            uc = new UserClient(); // 유저 클라이언트 ㄱㄱ
+            uc = new UserClient(Calendar.getInstance()); // 유저 클라이언트 ㄱㄱ
         }
 
     }
