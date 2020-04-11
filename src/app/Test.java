@@ -60,18 +60,20 @@ public class Test {
         // System.out.println(db2.vec1.get(i) + " " + db2.vec2.get(i));
         // }
 
-        // String str3 = "400|admin|12345";
-        // Db db = new Db();
-        // db.queryString(str3);
+        String str3 = "400|admin|12345";
+        Db db = new Db();
+        db.queryString(str3);
 
         // String str4 = "300|1";
         // Db db = new Db();
         // db.queryString(str4);
 
-        Calendar cc = Calendar.getInstance();
-        cc.set(2020, 4, 1);
-        // uc.cal_generate(cc);
-        UserClient uc = new UserClient(cc);
+        // Calendar cc = Calendar.getInstance();
+        // cc.set(2020, 4, 1);
+        // // uc.cal_generate(cc);
+        // UserClient uc = new UserClient(cc);
+
+        // Cal_info ci = new Cal_info(2020, 2);
 
     }
 }

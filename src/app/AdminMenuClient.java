@@ -2,14 +2,13 @@ package app;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.table.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class UserClient extends JFrame implements ActionListener {
+public class AdminMenuClient extends JFrame implements ActionListener {
 
     Db db_call;
 
@@ -28,8 +27,9 @@ public class UserClient extends JFrame implements ActionListener {
     JLabel laSun, laMon, laTue, laWed, laThu, laFri, laSat;
     // 우측 하단 메뉴패널////////////////
     JPanel jMain;
-    JTextField tfDate, tfSu, tfName;
-    JLabel laDate, laSu, laName, laImg;
+    JTextField tfDate;
+    JTextField tfMenu[] = new JTextField[5];;
+    JLabel laDate, laMenu1, laMenu2, laMenu3, laMenu4, laMenu5, laImg;
     JButton button1;
     ImageIcon img;
     // 우측 상단 날짜조절////////////////
@@ -50,28 +50,14 @@ public class UserClient extends JFrame implements ActionListener {
     int today_day = today_cal.get(Calendar.DATE);
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
-    // 테이블모델 >> 테이블 >> 스크롤
-    // DefaultTableModel model = new DefaultTableModel(data, cols);
-    Object data[][] = new Object[0][3]; // 5개 데이터가 담길 오브젝트
-    String cols[] = { "no", "주문자", "수량" };
-    DefaultTableModel model = new DefaultTableModel(data, cols) {
-        // 테이블모델...편집 못하게 메소드 오버라이딩
-        @Override
-        public boolean isCellEditable(int i, int c) {
-            return false;
-        }
-    };
-    JTable ordertable = new JTable(model);
-    JScrollPane tableSP = new JScrollPane(ordertable);
-
     // 생성자----------------------------------
-    public UserClient() {
+    public AdminMenuClient() {
         cal_grid = new JPanel(new GridLayout(6, 7, 2, 2));
         cal_generate(today_year, today_month + 1);
         cal_menu_generate();
         refresh(today_year, today_month, today_day);
         tfDate.setText(df.format(today_cal.getTime()));
-        disp();
+        // disp();
         System.out.println(today_year + "..." + today_month + "..." + today_day);
         System.out.println("생성 ok");
     }
@@ -88,8 +74,12 @@ public class UserClient extends JFrame implements ActionListener {
             void_pan_day[i] = new JPanel(); // 패널생성
             void_la_day[i] = new JLabel(); // 라벨생성
             void_pan_day[i].add(void_la_day[i]); // 패널 + 라벨
-            void_pan_day[i].setBackground(new Color(236, 247, 249));
+            void_pan_day[i].setBackground(new Color(254, 242, 242));
+            // void_pan_day[i].setBorder(new LineBorder(Color.black));
 
+            // if (i + 1 == void_pan_day.length) {
+            // void_la_day[i].setText("끗이다 요놈아");
+            // }
         }
 
         for (int i = 0; i < la_day.length; i++) {// 날째 , 메뉴 라벨
@@ -115,17 +105,17 @@ public class UserClient extends JFrame implements ActionListener {
 
             la_day[i].setOpaque(true);
             la_day[i].setBorder(BorderFactory.createEmptyBorder(3, 7, 3, 2));
-            la_day[i].setForeground(Color.white);
-            la_day[i].setBackground(new Color(1, 105, 157));
+            la_day[i].setForeground(new Color(250, 42, 110));
+            la_day[i].setBackground(new Color(251, 216, 219));
 
             la_menu[i].setOpaque(true);
             la_menu[i].setBorder(BorderFactory.createEmptyBorder(2, 7, 2, 0));
-            la_menu[i].setForeground(Color.black);
-            la_menu[i].setBackground(new Color(236, 247, 249));
+            la_menu[i].setForeground(new Color(103, 65, 61));
+            la_menu[i].setBackground(new Color(254, 242, 242));
 
             la_sum[i].setOpaque(true);
-            la_sum[i].setForeground(new Color(239, 162, 202));
-            la_sum[i].setBackground(new Color(1, 105, 157));
+            la_sum[i].setForeground(new Color(254, 136, 127));
+            la_sum[i].setBackground(new Color(251, 216, 219));
 
             la_menu[i].setFont(new Font("굴림체", Font.PLAIN, 16));
             la_day[i].setFont(new Font("굴림체", Font.BOLD, 16));
@@ -153,11 +143,11 @@ public class UserClient extends JFrame implements ActionListener {
     }// cal_generate end
 
     // 우측 메뉴 배치
-    public void cal_menu_generate() {
+    private void cal_menu_generate() {
         // 요일 붙이기
         dday = new JPanel(new GridLayout(0, 7));
         dday.setBounds(10, 10, 1200, 45);
-        dday.setBackground(new Color(1, 86, 129));
+        dday.setBackground(new Color(252, 165, 174));
 
         laSun = new JLabel("Sun", JLabel.CENTER);
         laMon = new JLabel("Mon", JLabel.CENTER);
@@ -196,70 +186,85 @@ public class UserClient extends JFrame implements ActionListener {
 
         jMain = new JPanel();
         jMain.setLayout(null);
-        jMain.setBackground(new Color(1, 86, 129));
+        jMain.setBackground(new Color(252, 165, 174));
 
         laDate = new JLabel("날짜", JLabel.RIGHT);
-        laDate.setFont(new Font("Diolog", Font.BOLD, 14));
+        laDate.setFont(new Font("Dialog", Font.BOLD, 14));
         laDate.setForeground(Color.white);
 
-        laSu = new JLabel("수량", JLabel.RIGHT);
-        laSu.setFont(new Font("Diolog", Font.BOLD, 14));
-        laSu.setForeground(Color.white);
-
-        laName = new JLabel("주문자", JLabel.RIGHT);
-        laName.setFont(new Font("Diolog", Font.BOLD, 14));
-        laName.setForeground(Color.white);
+        laMenu1 = new JLabel("Menu1", JLabel.RIGHT);
+        laMenu2 = new JLabel("Menu2", JLabel.RIGHT);
+        laMenu3 = new JLabel("Menu3", JLabel.RIGHT);
+        laMenu4 = new JLabel("Menu4", JLabel.RIGHT);
+        laMenu5 = new JLabel("Menu5", JLabel.RIGHT);
+        laMenu1.setFont(new Font("Dialog", Font.BOLD, 14));
+        laMenu2.setFont(new Font("Dialog", Font.BOLD, 14));
+        laMenu3.setFont(new Font("Dialog", Font.BOLD, 14));
+        laMenu4.setFont(new Font("Dialog", Font.BOLD, 14));
+        laMenu5.setFont(new Font("Dialog", Font.BOLD, 14));
+        laMenu1.setForeground(Color.white);
+        laMenu2.setForeground(Color.white);
+        laMenu3.setForeground(Color.white);
+        laMenu4.setForeground(Color.white);
+        laMenu5.setForeground(Color.white);
 
         img = new ImageIcon("image/logo.png");
         laImg = new JLabel(img);
 
         tfDate = new JTextField();
+        tfDate.setFont(new Font("Dialog", Font.PLAIN, 15));
         tfDate.setHorizontalAlignment(JTextField.CENTER); // 날짜칸 가운데 정렬
         tfDate.setEditable(false);// 날짜칸 편집 금지
-        tfSu = new JTextField();
-        tfName = new JTextField();
 
-        // taInfo = new JTextArea();
-        // taInfo.setBackground(Color.yellow);
-        // taInfo.setEditable(false);
+        for (int i = 0; i < 5; i++) {
+            // 메뉴칸 생성
+            tfMenu[i] = new JTextField();
+        }
+        for (int i = 0; i < 5; i++) {
+            // +폰트 설정 + 가운데 정렬
+            tfMenu[i].setFont(new Font("Dialog", Font.PLAIN, 15));
+            tfMenu[i].setHorizontalAlignment(JTextField.CENTER);
+        }
 
-        button1 = new JButton("주문 넣기");
+        button1 = new JButton("메뉴 수정&입력");
         getContentPane().setLayout(null);
         jMain.setBounds(1215, 80, 320, 860);
         jMain.setBorder(new LineBorder(Color.black));
 
         laDate.setBounds(50, 60, 50, 30);
-        laSu.setBounds(50, 90, 50, 30);
-        laName.setBounds(50, 120, 50, 30);
+        laMenu1.setBounds(50, 90, 50, 30);
+        laMenu2.setBounds(50, 120, 50, 30);
+        laMenu3.setBounds(50, 150, 50, 30);
+        laMenu4.setBounds(50, 180, 50, 30);
+        laMenu5.setBounds(50, 210, 50, 30);
         laImg.setBounds(0, 610, 320, 300);
 
         tfDate.setBounds(110, 60, 160, 30);
-        tfSu.setBounds(110, 90, 160, 30);
-        tfName.setBounds(110, 120, 160, 30);
 
-        button1.setBounds(50, 160, 220, 30);
-        button1.setBackground(new Color(1, 134, 209));
+        for (int i = 0; i < 5; i++) {
+            tfMenu[i].setBounds(110, 90 + 30 * i, 160, 30);
+            jMain.add(tfMenu[i]);
+        }
+
+        button1.setBounds(50, 250, 220, 30);
+        button1.setBackground(new Color(250, 42, 110));
         button1.setForeground(Color.white);
         button1.setFont(new Font("Dialog", Font.PLAIN, 15));
 
-        tableSP.setBounds(50, 210, 220, 350);
-        ordertable.addMouseListener(new MyMouse());
         getContentPane().add(jMain);
 
         jMain.add(laDate);
-        jMain.add(laSu);
-        jMain.add(laName);
+        jMain.add(laMenu1);
+        jMain.add(laMenu2);
+        jMain.add(laMenu3);
+        jMain.add(laMenu4);
+        jMain.add(laMenu5);
         jMain.add(laImg);
         jMain.add(tfDate);
-        jMain.add(tfSu);
-        jMain.add(tfName);
         jMain.add(button1);
-        jMain.add(tableSP); ///// 고객용페이지 // 테이블 안보여준다
 
         // 이벤트등록
         tfDate.addActionListener(this);
-        tfSu.addActionListener(this);
-        tfName.addActionListener(this);
         button1.addActionListener(this);
         /////////////////////////
         // 연도 2020-1 ~ 2020+1
@@ -282,7 +287,7 @@ public class UserClient extends JFrame implements ActionListener {
         datePane = new JPanel();
         datePane.setLayout(null);
         datePane.setBounds(1215, 10, 320, 72);
-        datePane.setBackground(new Color(1, 86, 129)); //////
+        datePane.setBackground(new Color(252, 165, 174)); //////
         datePane.setBorder(new LineBorder(Color.black));
 
         prevBtn.setBounds(30, 20, 50, 30);
@@ -309,7 +314,7 @@ public class UserClient extends JFrame implements ActionListener {
         getContentPane().add(datePane);
         getContentPane().add(cal_grid);
         getContentPane().setBackground(Color.white);
-        setTitle("고객용 페이지");
+        setTitle("관리자용  - 메뉴 관리");
         setVisible(true);
         setSize(1550, 980);
         setResizable(false);
@@ -322,12 +327,12 @@ public class UserClient extends JFrame implements ActionListener {
         datePane.repaint();
     }
 
-    public void remove_cal() {// 달력패널 삭제 메소드
+    private void remove_cal() {// 달력패널 삭제 메소드
         cal_grid.removeAll();
     }
 
     // 데이터만 다시 불러오는 메소드(패널 재배치X)
-    public void refresh(int year, int month, int date) {
+    private void refresh(int year, int month, int date) {
 
         // 100|startDate|endDate // select menu (1 month)
         // 130|startDate|endDate // select count(*) orderList( 1month)
@@ -353,6 +358,7 @@ public class UserClient extends JFrame implements ActionListener {
         sstr = "160|" + startDate + "|" + endDate + "|" + orderDate;
         db_call.queryString(sstr);
 
+        // 날짜별로 주문합계, 메뉴 다시 뿌려준다
         for (int i = 0; i < la_day.length; i++) {
             la_menu[i].setText(db_call.ht100.get(i));
             la_sum[i].setText(db_call.temp_orderCnt[i] + "");
@@ -360,30 +366,10 @@ public class UserClient extends JFrame implements ActionListener {
 
     }
 
-    private void disp() { // order테이블에 값 뿌리는 메소드
-        model.setRowCount(0); // 초기화
-        System.out.println("db_call.vec149.size()");
-        System.out.println(db_call.vec150.size());
-
-        for (int j = 0; j < db_call.vec150.size(); j++) {
-            String temp[] = { (db_call.vec150.get(j)), db_call.vec151.get(j), db_call.vec152.get(j) };
-            model.addRow(temp);
-        }
-    }
-
-    private void order() { // 주문 넣는 메소드
-        // 200|orderDate|count|name // insert orderlist (UserClient ONLY)
-        String o_date = tfDate.getText().replaceAll("-", "");
-        String o_count = tfSu.getText().trim();
-        String o_name = tfName.getText().trim();
-
-        db_call.queryString("200|" + o_date + "|" + o_count + "|" + o_name);
-    }
-
-    private void order_cancel(int k) {// 주문 취소하는 메소드
-        // 300|no // delete orderlist (AdminClient ONLY)
-        db_call.queryString("300|" + k);
-    }
+    // 안쓰는 메소드
+    // private void disp()
+    // private void order()
+    // private void order_cancel(int k)
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -423,49 +409,35 @@ public class UserClient extends JFrame implements ActionListener {
             refresh(yy, mm - 1, 1);// 데이터 다시 부르고
         }
 
-        // Admin > 주문삭제 버튼, User > 주문입력 버튼
+        // Admin > 주문삭제 버튼
+        // User > 주문입력 버튼
+        // AdminMenu > 메뉴입력&수정 버튼
         if (e.getSource() == button1) {
+            // 550|insertDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
+            Vector<String> temp_vec = new Vector<>();
 
-            String ssu = tfSu.getText().trim();
-
-            try {
-                int su = Integer.parseInt(ssu);
-                if (ssu.equals("") || ssu.length() < 1 || su < 1) {
-                    JOptionPane.showMessageDialog(this, "수량을 입력해주세요.");
-                    tfSu.setText("1");
-                    tfSu.requestFocus();
-                    return;
-                }
-
-            } catch (Exception ee) {
-                JOptionPane.showMessageDialog(this, "수량을 올바르게 입력하세요");
-                tfSu.setText("1");
-                tfSu.requestFocus();
-                return;
+            for (int i = 0; i < 5; i++) {
+                // null or 빈칸 건너뛰고 vector.add
+                String temp = tfMenu[i].getText();
+                if (!(temp == null || temp.length() < 1))
+                    temp_vec.add(tfMenu[i].getText());
             }
-
-            String name = tfName.getText().trim();
-            if (name.equals("") || name.length() < 1) {
-                JOptionPane.showMessageDialog(this, "이름을 입력해주세요.");
-                tfName.setText("");
-                tfName.requestFocus();
-                return;
+            for (int i = 0; i < 5; i++) {
+                temp_vec.add(" ");
             }
+            String tempDate = tfDate.getText().replaceAll("-", "");
+            System.out.println(tempDate);
 
-            if (name.length() > 12) {
-                JOptionPane.showMessageDialog(this, "이름을 12자 내로 입력해주세요.");
-                tfName.setText("");
-                tfName.requestFocus();
-                return;
+            String tempMenuString = "500|" + tempDate + "|";
+
+            for (int i = 0; i < 5; i++) {
+                tempMenuString = tempMenuString + temp_vec.get(i) + "|";
             }
+            System.out.println(tempMenuString);
 
-            JOptionPane.showMessageDialog(this, "주문이 완료되었습니다.");
+            db_call.queryString(tempMenuString);
 
-            order();
             refresh(yy, mm - 1, dd);// 데이터 다시 부르고
-            disp();
-            tfName.setText("");
-            tfSu.setText("");
         }
     }
 
@@ -487,17 +459,30 @@ public class UserClient extends JFrame implements ActionListener {
                     String clickDate3 = ((i + 101) + "").substring(1, 3);
                     String clickDate = cb_year + "-" + clickDate2 + "-" + clickDate3;
                     tfDate.setText(clickDate);
+                    // tfMenu 1,2,3,4,5 >> 메뉴 넣어주기
+                    String temp = db_call.ht100.get(i);
+                    temp = temp.replaceAll("<html>", "");
+                    temp = temp.replaceAll("</html>", "");
+                    temp = temp.replaceAll("<span>", "");
+                    temp = temp.replaceAll("</span>", "");
+                    temp = temp.replaceAll("<br>", "|");
 
-                    disp();// 우측 하단 테이블에 넣어주기
+                    System.out.println(temp);
+                    StringTokenizer st = new StringTokenizer(temp, "|");
+
+                    for (int j = 0; j < 5; j++) {
+                        tfMenu[j].setText(st.nextToken());
+                    }
+
+                    // disp();// 우측 하단 테이블에 넣어주기
                 }
             }
-
         }
     }
 
     // main
-    public static void main(String[] args) throws Exception {
-        new UserClient();
+    public static void main(String[] args) {
+        new AdminMenuClient();
     }
 }
 // inner class end

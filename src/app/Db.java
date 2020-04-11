@@ -12,12 +12,11 @@ public class Db {
     // 100|startDate|endDate // select menu (1 month)
     // 130|startDate|endDate // select count(*) orderList( 1month)
     // 150|orderDate // select orderlist 1day (AdminClient ONLY)
-    // 160|startDate|endDate|orderDate // 한달치 주문count + 특정일 주문내역
+    // 160|startDate|endDate|orderDate // 130+150
     // 200|orderDate|count|name // insert orderlist (UserClient ONLY)
-    // 300|orderDate|name // delete orderlist (AdminClient ONLY)
-    // 400|id|pwd // select adminlist
-
-    // HashTable<Integer, Object> ht = new Hashtable<>()
+    // 300|no // delete orderlist (AdminClient ONLY)
+    // 400|id|pwd // select adminlist (MainClient ONLY)
+    // 550|insertDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
 
     String queryString; // 실행할 쿼리
 
@@ -28,13 +27,12 @@ public class Db {
     Statement stmt = null;
     String sql = "";
     ResultSet rs;
-    // 값 담아서 나갈 변수
-    Hashtable<Integer, String> ht100 = new Hashtable<>();// 100
-    int[] temp_orderCnt = new int[31]; // 130
-    Vector<Integer> vec150 = new Vector<>(); // 150
-    Vector<String> vec151 = new Vector<>();// 150
-    Hashtable<Integer, Object[]> ht1 = new Hashtable<>();
-    String hwal;// 400
+    // @@ 데이터 불러와 담아두는 저장소
+    Hashtable<Integer, String> ht100 = new Hashtable<>();// 100| 한달치 메뉴 불러와 담는 해시테이블
+    int[] temp_orderCnt = new int[31]; // 130| 하루 주문갯수(한달치) 불러와 담는 정수배열
+    public Vector<String> vec150 = new Vector<>(); // 150 //orderlist.no
+    public Vector<String> vec151 = new Vector<>(); // 150 //orderlist.count
+    public Vector<String> vec152 = new Vector<>();// 150 //orderlist.name
 
     // 메소드
     public void queryString(String protocol) {
@@ -45,6 +43,7 @@ public class Db {
 
         try {
             pp.load(new FileInputStream("properties//DB.properties"));
+            System.out.println("프로퍼티 로딩 ok");
         } catch (Exception ex) {
             System.out.println("!!!! properties 읽기 예외  " + ex);
         }
@@ -87,12 +86,6 @@ public class Db {
 
                     sql = "select to_char(orderDate, 'dd') orderDate, menu1, menu2, menu3, menu4, menu5 from menu WHERE orderDate BETWEEN ' "
                             + date100 + "' AND '" + date101 + "'";
-
-                    // select to_char(orderDate, 'yyyymmdd') orderDate,
-                    // menu1, menu2, menu3,
-                    // menu4, menu5 from menu
-                    // WHERE orderDate BETWEEN TO_DATE('20200127') AND
-                    // TO_DATE('20200201');
 
                     rs = stmt.executeQuery(sql);
 
@@ -157,9 +150,9 @@ public class Db {
                     if (rs != null) {
                         while (rs.next()) {
                             // temp = rs.getString("menu1");
-                            vec150.add(rs.getInt("count"));
-                            vec151.add(rs.getString("name"));
-                            System.out.printf("%d(%d) ", vec150.size(), vec151.size());
+                            vec151.add(rs.getString("count"));
+                            vec152.add(rs.getString("name"));
+                            System.out.printf("%d(%d) ", vec151.size(), vec152.size());
                         }
                     }
                     break;
@@ -204,9 +197,11 @@ public class Db {
                     if (rs != null) {
                         while (rs.next()) {
                             // temp = rs.getString("menu1");
-                            vec150.add(rs.getInt("count"));
+                            vec150.add(rs.getString("no"));
                             vec151.add(rs.getString("name"));
-                            System.out.printf("%d(%d) ", vec150.size(), vec151.size());
+                            vec152.add(rs.getString("count"));
+                            System.out.printf("%d(%d) ", vec151.size(), vec152.size());
+                            System.out.println();
                         }
                     }
 
@@ -272,6 +267,52 @@ public class Db {
                     }
 
                     break;
+
+                case 500:// delete and insert menu
+                    // 500|insertDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
+
+                    String date500 = token.nextToken();
+                    date500 = date500.substring(0, 4) + "-" + date500.substring(4, 6) + "-" + date500.substring(6, 8);
+                    // ex) 2020-04-11
+
+                    stmt.executeUpdate("delete from menu where orderdate  = '" + date500 + "'");
+
+                    String temp_menu[] = new String[5];
+
+                    for (int i = 0; i < temp_menu.length; i++) {
+                        temp_menu[i] = token.nextToken();
+                    }
+
+                    sql = "insert into menu values(?,?,?,?,?,?)";
+
+                    try {
+                        pstmt = con.prepareStatement(sql);
+                        pstmt.setString(1, date500);
+
+                        for (int i = 0; i < 5; i++) {
+                            pstmt.setString(i + 2, temp_menu[i]);
+                        }
+
+                    } catch (SQLException e1) {
+                        System.out.println("pstmt 하다가 오류...");
+                        e1.printStackTrace();
+                    } // t-c end
+                    try {
+                        pstmt.executeUpdate();
+                        System.out.println("delete and insert OK");
+                        pstmt.close();
+
+                    } catch (SQLException ex) {
+                        System.out.println("insert 하다가 오류  " + ex);
+                    } // t-c end
+
+                    System.out.println();
+                    System.out.println(sql);
+                    System.out.println();
+
+                    stmt.executeUpdate(sql);
+
+                    break;
                 default:
                     break;
             }
@@ -311,8 +352,6 @@ public class Db {
         } // end try cateh
 
     }// cons end
-
-    // 메소드
 
 }
 // class end
