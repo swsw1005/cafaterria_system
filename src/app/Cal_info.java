@@ -19,7 +19,5 @@ public class Cal_info {
         temp_cal.set(year, month, 0);
         max_day = temp_cal.get(Calendar.DATE);
         System.out.println("max_day " + max_day);
-
     }
-
 }

@@ -1,6 +1,7 @@
 package app;
 
 import java.util.Calendar;
+import java.util.StringTokenizer;
 
 // 100|startDate|endDate // select menu (1 month)
 // 130|startDate|endDate // select count(*) orderList( 1month)
@@ -60,9 +61,9 @@ public class Test {
         // System.out.println(db2.vec1.get(i) + " " + db2.vec2.get(i));
         // }
 
-        String str3 = "400|admin|12345";
-        Db db = new Db();
-        db.queryString(str3);
+        // String str3 = "400|admin|12345";
+        // Db db = new Db();
+        // db.queryString(str3);
 
         // String str4 = "300|1";
         // Db db = new Db();
@@ -74,6 +75,17 @@ public class Test {
         // UserClient uc = new UserClient(cc);
 
         // Cal_info ci = new Cal_info(2020, 2);
+
+        // String str3 = "500|20191101|밥알|김치|계란|묵| ";
+        // Db db = new Db();
+        // db.queryString(str3);
+
+        String a1 = null;
+
+        System.out.println(a1);
+
+        a1 = a1 + " ";
+        System.out.println(a1);
 
     }
 }

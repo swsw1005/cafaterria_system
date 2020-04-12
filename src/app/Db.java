@@ -16,9 +16,8 @@ public class Db {
     // 200|orderDate|count|name // insert orderlist (UserClient ONLY)
     // 300|no // delete orderlist (AdminClient ONLY)
     // 400|id|pwd // select adminlist (MainClient ONLY)
-    // 550|insertDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
-
-    String queryString; // 실행할 쿼리
+    // 500|insertDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
+    // 520|deleteDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
 
     String driver, url, user, pwd; // DB연결 기본 변수
 
@@ -29,6 +28,8 @@ public class Db {
     ResultSet rs;
     // @@ 데이터 불러와 담아두는 저장소
     Hashtable<Integer, String> ht100 = new Hashtable<>();// 100| 한달치 메뉴 불러와 담는 해시테이블
+    String[] arr100 = new String[31];
+
     int[] temp_orderCnt = new int[31]; // 130| 하루 주문갯수(한달치) 불러와 담는 정수배열
     public Vector<String> vec150 = new Vector<>(); // 150 //orderlist.no
     public Vector<String> vec151 = new Vector<>(); // 150 //orderlist.count
@@ -76,37 +77,62 @@ public class Db {
 
             switch (pNum) {
 
-                case 100: // select menu (1 month) // 100|startDate|endDate
+                case 100: // select menu (1 month)
+                    // 100|startDate|endDate // select menu (1 month)
+                    // 해당 월의 메뉴 전체 불러오기
                     System.out.println("100----");
                     String date100 = token.nextToken();
-                    String date101 = token.nextToken();
+                    // String date101 = token.nextToken();
+
+                    int date100_i = Integer.parseInt(date100);
 
                     date100 = date100.substring(0, 4) + "-" + date100.substring(4, 6) + "-" + date100.substring(6, 8);
-                    date101 = date101.substring(0, 4) + "-" + date101.substring(4, 6) + "-" + date101.substring(6, 8);
+                    // date101 = date101.substring(0, 4) + "-" + date101.substring(4, 6) + "-" +
+                    // date101.substring(6, 8);
 
-                    sql = "select to_char(orderDate, 'dd') orderDate, menu1, menu2, menu3, menu4, menu5 from menu WHERE orderDate BETWEEN ' "
-                            + date100 + "' AND '" + date101 + "'";
+                    for (int i = 0; i < 31; i++) {
 
-                    rs = stmt.executeQuery(sql);
+                        try {
+                            sql = "select * from menu WHERE orderDate = '" + (date100_i + i) + "'";
+                            rs = stmt.executeQuery(sql);
 
-                    if (rs != null) {
-                        int i = 0;
-                        while (rs.next()) {
-                            // String temp = rs.getString("menu1");
-                            // temp = temp + "\n" + rs.getString("menu2");
-                            // temp = temp + "\n" + rs.getString("menu3");
-                            // temp = temp + "\n" + rs.getString("menu4");
-                            // temp = temp + "\n" + rs.getString("menu5");
-                            String temp = "<html><span>" + rs.getString("menu1").trim();
-                            temp = temp + "<br>" + rs.getString("menu2").trim();
-                            temp = temp + "<br>" + rs.getString("menu3").trim();
-                            temp = temp + "<br>" + rs.getString("menu4").trim();
-                            temp = temp + "<br>" + rs.getString("menu5").trim();
-                            temp = temp + "</span></html>";
+                            if (rs != null) {
 
-                            ht100.put(i, temp);
-                            i++;
+                                while (rs.next()) {
+                                    // Jlabel .setText 할때는 줄바꿈(\n) 작동하지 않는다.
+                                    // HTML 태그가 작동한다고 해서, <br> 태그로 줄바꿈 구현하였다.
+
+                                    // String temp_arr[] = new String[5];
+                                    Vector<String> temp_vec = new Vector<>();
+                                    String temp = "<html><span>";
+
+                                    for (int j = 0; j < 5; j++) {
+                                        try {
+                                            // temp_vec.add(rs.getString("menu" + (j + 1)).trim());
+                                            // temp = temp + temp_vec.get(j) + "<br>";
+                                            ///
+                                            temp = temp + rs.getString("menu" + (j + 1)).trim() + "<br>";
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                    temp = temp + "</span></html>";
+                                    temp.replace("<br></span>", "</span>");
+
+                                    // String temp = "<html><span>" + rs.getString("menu1").trim() + "";
+                                    // temp = temp + "<br>" + rs.getString("menu2").trim() + "";
+                                    // temp = temp + "<br>" + rs.getString("menu3").trim() + "";
+                                    // temp = temp + "<br>" + rs.getString("menu4").trim() + "";
+                                    // temp = temp + "<br>" + rs.getString("menu5").trim() + "";
+                                    // temp = temp + "</span></html>";
+
+                                    ht100.put(i, temp);
+                                    arr100[i] = temp;
+                                    // i++;
+                                }
+                            }
+                        } catch (Exception e) {
                         }
+
                     }
                     break;
 
@@ -152,7 +178,7 @@ public class Db {
                             // temp = rs.getString("menu1");
                             vec151.add(rs.getString("count"));
                             vec152.add(rs.getString("name"));
-                            System.out.printf("%d(%d) ", vec151.size(), vec152.size());
+                            // System.out.printf("%d(%d) ", vec151.size(), vec152.size());
                         }
                     }
                     break;
@@ -165,10 +191,11 @@ public class Db {
                     int date160 = Integer.parseInt(token.nextToken());// startdate
                     int date161 = Integer.parseInt(token.nextToken());// enddate
                     String date162 = token.nextToken();// orderdate
+                    date162 = date162.substring(0, 4) + "-" + date162.substring(4, 6) + "-" + date162.substring(6, 8);
 
-                    System.out.println(date160);
-                    System.out.println(date161);
-                    System.out.println(date162);
+                    System.out.print(date160 + "\t");
+                    System.out.print(date161 + "\t");
+                    System.out.print(date162 + "\n");
 
                     int d160161 = date161 - date160;
 
@@ -184,12 +211,10 @@ public class Db {
                         if (rs != null) {
                             while (rs.next()) {
                                 temp_orderCnt[i] = rs.getInt(1);
-                                System.out.print(temp_orderCnt[i] + " ");
+                                // System.out.print(temp_orderCnt[i] + " ");
                             }
                         }
                     }
-
-                    date162 = date162.substring(0, 4) + "-" + date162.substring(4, 6) + "-" + date162.substring(6, 8);
 
                     sql = "select * from orderlist where orderDate = '" + date162 + "'";
                     System.out.println(sql);
@@ -200,8 +225,8 @@ public class Db {
                             vec150.add(rs.getString("no"));
                             vec151.add(rs.getString("name"));
                             vec152.add(rs.getString("count"));
-                            System.out.printf("%d(%d) ", vec151.size(), vec152.size());
-                            System.out.println();
+                            // System.out.printf("%d(%d) ", vec151.size(), vec152.size());
+                            // System.out.println();
                         }
                     }
 
@@ -248,43 +273,47 @@ public class Db {
                     break;
 
                 case 400: // select state from adminlist where id = id and pw = pw;
-                    // 400|id|pwd
+                    // 400|id|pw // select adminlist (MainClient ONLY)
+                    // 입력된 id, pw로 adminlist 테이블에서 status 조회.
 
                     String adminId = token.nextToken();
                     String adminPw = token.nextToken();
 
                     sql = "select state from adminlist where id='" + adminId + "' and pw='" + adminPw + "'";
-
                     System.out.println(sql);
 
                     rs = stmt.executeQuery(sql);
-
                     if (rs != null) {
                         while (rs.next()) {
                             String status = rs.getString("state");
                             System.out.println("status : " + status);
                         }
                     }
-
                     break;
 
                 case 500:// delete and insert menu
                     // 500|insertDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
 
                     String date500 = token.nextToken();
+                    // ex)20200411
                     date500 = date500.substring(0, 4) + "-" + date500.substring(4, 6) + "-" + date500.substring(6, 8);
                     // ex) 2020-04-11
 
+                    // 해당 날짜 menu 삭제
                     stmt.executeUpdate("delete from menu where orderdate  = '" + date500 + "'");
-
-                    String temp_menu[] = new String[5];
-
-                    for (int i = 0; i < temp_menu.length; i++) {
-                        temp_menu[i] = token.nextToken();
+                    // 메뉴5개 담을 배열
+                    String temp_menu[] = new String[10];
+                    for (int i = 0; i < 5; i++) {
+                        try {
+                            temp_menu[i] = token.nextToken();
+                        } catch (Exception e) {
+                        }
+                    }
+                    for (int i = 5; i < 10; i++) {
+                        temp_menu[i] = " ";
                     }
 
                     sql = "insert into menu values(?,?,?,?,?,?)";
-
                     try {
                         pstmt = con.prepareStatement(sql);
                         pstmt.setString(1, date500);
@@ -313,20 +342,10 @@ public class Db {
                     stmt.executeUpdate(sql);
 
                     break;
+
                 default:
                     break;
-            }
-
-            // 6. 실행된 결과 표시 --> HTML, CSS , JS
-            if (rs != null) {
-                while (rs.next()) {
-                    String temp_id = rs.getString("id");
-                    String temp_pwd = rs.getString("pw");
-                    String temp_name = rs.getString("name");
-
-                    System.out.println(temp_id + "\t" + temp_pwd + "\t" + temp_name);
-                }
-            }
+            } // switch (pNum) end
 
         } catch (SQLException ex2) {
             // 예외처리
