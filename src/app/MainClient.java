@@ -10,7 +10,7 @@ import java.util.*;
 // 맨처음 로그인 화면, 
 // 1. 관리자 로그인 >>> AdminClient.java
 // 2. 비회원 로그인 >>> UserClient.java
-//  1 or 2  이동하면,  MainClient 는 setVisible(false);
+// 1 or 2  이동하면,  MainClient 는 setVisible(false);
 public class MainClient extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 6026359005066173137L;
@@ -37,7 +37,7 @@ public class MainClient extends JFrame implements ActionListener {
         try {
             pp.load(new FileInputStream("properties//DB.properties"));
         } catch (Exception ex) {
-            System.out.println("!!!! properties 읽기 예외  " + ex);
+            System.out.println("properties 읽기 예외: " + ex);
         }
 
         String driver = pp.getProperty("driver");
@@ -77,11 +77,11 @@ public class MainClient extends JFrame implements ActionListener {
         // 버튼 생성 및 스타일 설정
         buSys = new JButton("관리자 로그인");
         buSys.setFont(new Font("Dialog", Font.BOLD, 16));
-        buSys.setBackground(Color.blue);
+        buSys.setBackground(new Color(1, 69, 120));
         buSys.setForeground(Color.white);
-        buUser = new JButton("비회원 로그인");
+        buUser = new JButton("사용자 로그인");
         buUser.setFont(new Font("Dialog", Font.BOLD, 16));
-        buUser.setBackground(Color.blue);
+        buUser.setBackground(new Color(1, 69, 120));
         buUser.setForeground(Color.white);
 
         // 패널 생성 및 배경색 지정

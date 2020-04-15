@@ -1,0 +1,49 @@
+ case 500:// update or insert menu
+                    // 500|insertDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
+
+                    String date500 = token.nextToken();// ex)20200411
+                    System.out.println(date500);
+                    // 메뉴5개 담을 배열
+                    String temp_menu[] = new String[5];
+                    for (int i = 0; i < temp_menu.length; i++) {
+                        if (token.hasMoreTokens()) {
+                            temp_menu[i] = token.nextToken();
+                        } else {
+                            temp_menu[i] = " ";
+                        }
+                    }
+                    date500 = date500.substring(0, 4) + "-" + date500.substring(4, 6) + "-" + date500.substring(6, 8);
+                    // ex) 2020-04-11
+
+                    // 해당 날짜 menu 삭제
+                    stmt.executeUpdate("delete from menu where orderdate  = '" + date500 + "'");
+
+                    sql = "insert into menu values(?,?,?,?,?,?)";
+                    try {
+                        pstmt = con.prepareStatement(sql);
+                        pstmt.setString(1, date500);
+
+                        for (int i = 0; i < 5; i++) {
+                            pstmt.setString(i + 2, temp_menu[i]);
+                        }
+
+                    } catch (SQLException e1) {
+                        System.out.println("pstmt 하다가 오류...");
+                        e1.printStackTrace();
+                    } // t-c end
+                    try {
+                        pstmt.executeUpdate();
+                        System.out.println("delete and insert OK");
+                        pstmt.close();
+
+                    } catch (SQLException ex) {
+                        System.out.println("insert 하다가 오류  " + ex);
+                    } // t-c end
+
+                    System.out.println();
+                    System.out.println(sql);
+                    System.out.println();
+
+                    stmt.executeUpdate(sql);
+
+                    break;

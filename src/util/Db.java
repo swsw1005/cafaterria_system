@@ -1,4 +1,4 @@
-package app;
+package util;
 
 import java.io.*;
 import java.sql.*;
@@ -17,7 +17,6 @@ public class Db {
     // 300|no // delete orderlist (AdminClient ONLY)
     // 400|id|pwd // select adminlist (MainClient ONLY)
     // 500|insertDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
-    // 520|deleteDate|menu1|menu2|menu3|menu4|menu5 (AdminMenuClient ONLY)
 
     String driver, url, user, pwd; // DB연결 기본 변수
 
@@ -27,13 +26,15 @@ public class Db {
     String sql = "";
     ResultSet rs;
     // @@ 데이터 불러와 담아두는 저장소
-    Hashtable<Integer, String> ht100 = new Hashtable<>();// 100| 한달치 메뉴 불러와 담는 해시테이블
-    String[] arr100 = new String[31];
-
-    int[] temp_orderCnt = new int[31]; // 130| 하루 주문갯수(한달치) 불러와 담는 정수배열
+    public Hashtable<Integer, String> ht100 = new Hashtable<>();// 100| 한달치 메뉴 불러와 담는 해시테이블
+    public int[] orderCnt130 = new int[31]; // 130| 하루 주문갯수(한달치) 불러와 담는 정수배열
     public Vector<String> vec150 = new Vector<>(); // 150 //orderlist.no
     public Vector<String> vec151 = new Vector<>(); // 150 //orderlist.count
     public Vector<String> vec152 = new Vector<>();// 150 //orderlist.name
+
+    private Vector<String> vec110[];
+    private Hashtable<Integer, Vector<String>> ht110 = new Hashtable<>();
+    private Vector<String> vec111 = new Vector<>();
 
     // 메소드
     public void queryString(String protocol) {
@@ -126,7 +127,6 @@ public class Db {
                                     // temp = temp + "</span></html>";
 
                                     ht100.put(i, temp);
-                                    arr100[i] = temp;
                                     // i++;
                                 }
                             }
@@ -155,8 +155,8 @@ public class Db {
                         rs = stmt.executeQuery(sql);
                         if (rs != null) {
                             while (rs.next()) {
-                                temp_orderCnt[i] = rs.getInt(1);
-                                System.out.print(temp_orderCnt[i] + " ");
+                                orderCnt130[i] = rs.getInt(1);
+                                System.out.print(orderCnt130[i] + " ");
                             }
                         }
                     }
@@ -210,7 +210,7 @@ public class Db {
                         rs = stmt.executeQuery(sql);
                         if (rs != null) {
                             while (rs.next()) {
-                                temp_orderCnt[i] = rs.getInt(1);
+                                orderCnt130[i] = rs.getInt(1);
                                 // System.out.print(temp_orderCnt[i] + " ");
                             }
                         }

@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import util.Db;
+import util.Cal_info;
 
 public class UserClient extends JFrame implements ActionListener {
 
@@ -62,6 +64,9 @@ public class UserClient extends JFrame implements ActionListener {
 
     // ### 생성자----------------------------------
     public UserClient() {
+
+        // System.setProperty("sun.java2d.uiScale", "1.0");
+
         // 달력 layout
         cal_grid = new JPanel(new GridLayout(6, 7, 2, 2));
         // 달력 패널 생성
@@ -96,7 +101,7 @@ public class UserClient extends JFrame implements ActionListener {
             String temp = (i + 1) + "";
             la_day[i] = new JLabel(temp, JLabel.LEFT);// 날짜표시 라벨
             la_menu[i] = new JLabel(temp, JLabel.LEFT); // 메뉴표시 라벨
-            la_sum[i] = new JLabel("", JLabel.CENTER); // 1일주문합 표시 라벨
+            la_sum[i] = new JLabel("", JLabel.RIGHT); // 1일주문합 표시 라벨
         } // for end
         for (int i = 0; i < la_day.length; i++) {
             // 날짜패널 생성 + 레이아웃 + 날짜,메뉴 라벨링
@@ -104,7 +109,7 @@ public class UserClient extends JFrame implements ActionListener {
             pan_day_sum[i] = new JPanel();
 
             pan_day[i].setLayout(new BorderLayout());
-            pan_day_sum[i].setLayout(new GridLayout(1, 2, 0, 2));
+            pan_day_sum[i].setLayout(new GridLayout(1, 2));
 
             pan_day[i].add(la_menu[i], "Center");
             pan_day[i].add(pan_day_sum[i], "North");
@@ -114,8 +119,8 @@ public class UserClient extends JFrame implements ActionListener {
 
             la_day[i].setOpaque(true);
             la_day[i].setBorder(BorderFactory.createEmptyBorder(3, 7, 3, 2));
-            la_day[i].setForeground(Color.white);
-            la_day[i].setBackground(new Color(1, 105, 157));
+            la_day[i].setForeground(new Color(1, 70, 105));
+            la_day[i].setBackground(new Color(1, 128, 188));
 
             la_menu[i].setOpaque(true);
             la_menu[i].setBorder(BorderFactory.createEmptyBorder(2, 7, 2, 0));
@@ -123,8 +128,9 @@ public class UserClient extends JFrame implements ActionListener {
             la_menu[i].setBackground(new Color(236, 247, 249));
 
             la_sum[i].setOpaque(true);
-            la_sum[i].setForeground(new Color(239, 162, 202));
-            la_sum[i].setBackground(new Color(1, 105, 157));
+            la_sum[i].setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 7));
+            la_sum[i].setForeground(new Color(50, 210, 220));
+            la_sum[i].setBackground(new Color(1, 128, 188));
 
             la_menu[i].setFont(new Font("굴림체", Font.PLAIN, 16));
             la_day[i].setFont(new Font("굴림체", Font.BOLD, 16));
@@ -252,6 +258,19 @@ public class UserClient extends JFrame implements ActionListener {
         jMain.add(button1);
         jMain.add(tableSP); ///// 고객용페이지 // 테이블 안보여준다
 
+        // 테이블 너비 설정
+        ordertable.getTableHeader().setReorderingAllowed(false); // 이동 불가
+        ordertable.getTableHeader().setResizingAllowed(false); // 크기 조절 불가
+        TableColumn tc = ordertable.getColumnModel().getColumn(0);
+        tc.setMaxWidth(50);
+        tc.setMinWidth(50);
+        tc = ordertable.getColumnModel().getColumn(1);
+        tc.setMaxWidth(200);
+        tc.setMinWidth(50);
+        tc = ordertable.getColumnModel().getColumn(2);
+        tc.setMaxWidth(50);
+        tc.setMinWidth(50);
+
         // 이벤트등록
         tfDate.addActionListener(this);
         tfSu.addActionListener(this);
@@ -307,7 +326,7 @@ public class UserClient extends JFrame implements ActionListener {
         getContentPane().setBackground(Color.white);
         setTitle("고객용 페이지");
         setVisible(true);
-        setSize(1550, 980);
+        setSize(1555, 980);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -352,8 +371,16 @@ public class UserClient extends JFrame implements ActionListener {
             for (int i = 0; i < la_day.length; i++) {
                 la_menu[i].setText(db_call.ht100.get(i));
                 // la_menu[i].setText(db_call.arr100[i]);
-                la_sum[i].setText(db_call.temp_orderCnt[i] + "");
+                la_sum[i].setText(db_call.orderCnt130[i] + "");
             }
+
+            // 오늘날짜 서식 적용
+            boolean b1 = yearCombo.getSelectedItem().toString().trim().equals(today_year + "");
+            boolean b2 = monthCombo.getSelectedItem().toString().trim().equals((today_month + 1) + "");
+            if (b1 && b2) {
+                pan_day[today_day - 1].setBorder(new LineBorder(Color.red, 2));
+            } // 오늘날짜 서식 end
+
         } catch (Exception e) {
             System.out.println("데이터 오염");
         }
@@ -484,6 +511,13 @@ public class UserClient extends JFrame implements ActionListener {
 
             for (int i = 0; i < 31; i++) {
                 if (me.getSource() == pan_day[i]) {
+
+                    // 클릭한 날짜 서식변경
+                    la_day[i].setBackground(new Color(236, 247, 249));
+                    la_menu[i].setBackground(new Color(1, 128, 188));
+                    la_sum[i].setBackground(new Color(236, 247, 249));
+                    la_menu[i].setForeground(Color.white);
+
                     int cb_year = (Integer) yearCombo.getSelectedItem();
                     int cb_month = (Integer) monthCombo.getSelectedItem();
 
@@ -497,6 +531,11 @@ public class UserClient extends JFrame implements ActionListener {
                     tfDate.setText(clickDate);
 
                     disp();// 주문목록 refresh
+                } else {
+                    la_day[i].setBackground(new Color(1, 128, 188));
+                    la_menu[i].setBackground(new Color(236, 247, 249));
+                    la_sum[i].setBackground(new Color(1, 128, 188));
+                    la_menu[i].setForeground(Color.black);
                 } // if end
             } // for end
         }// mousePressed end

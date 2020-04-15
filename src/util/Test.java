@@ -1,4 +1,4 @@
-package app;
+package util;
 
 import java.util.Calendar;
 import java.util.StringTokenizer;
@@ -42,9 +42,9 @@ public class Test {
         // }
 
         // 111
-        // String str = "200|20200301|10|김철수";
-        // Db db = new Db();
-        // db.queryString(str);
+        String str = "200|20200301|10|김철수";
+        Db db = new Db();
+        db.queryString(str);
 
         // String str2 = "150|20200301";
         // Db db2 = new Db();
@@ -79,13 +79,6 @@ public class Test {
         // String str3 = "500|20191101|밥알|김치|계란|묵| ";
         // Db db = new Db();
         // db.queryString(str3);
-
-        String a1 = null;
-
-        System.out.println(a1);
-
-        a1 = a1 + " ";
-        System.out.println(a1);
 
     }
 }

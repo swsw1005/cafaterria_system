@@ -1,0 +1,13 @@
+0.  client 창 3개
+db 테이블 3개
+
+
+1. mainclient
+
+2. admincilent
+
+3. userclient
+
+4. cal_generate
+
+5. DB
