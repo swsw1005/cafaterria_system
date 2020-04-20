@@ -44,6 +44,7 @@ public class Db {
         Properties pp = new Properties();
 
         try {
+
             pp.load(new FileInputStream("properties//DB.properties"));
             System.out.println("프로퍼티 로딩 ok");
         } catch (Exception ex) {
