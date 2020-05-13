@@ -1664,3 +1664,9 @@ insert into orderlist values('438','2020-04-08','4','김영선');
 insert into orderlist values('439','2020-04-09','2','김우성');
 insert into orderlist values('440','2020-04-09','1','김윤빈');
 insert into orderlist values('441','2020-04-09','4','김인규');
+
+commit;
+
+select count(*) from menu;
+
+select count(*) from orderlist;

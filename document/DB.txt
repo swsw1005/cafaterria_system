@@ -1,5 +1,5 @@
 drop table menu;
-drop table orderlist;
+
 
 CREATE TABLE MENU(
     orderdate date PRIMARY KEY,
@@ -10,6 +10,9 @@ CREATE TABLE MENU(
     menu5 VARCHAR2(30)
 );
 
+
+drop table orderlist;
+
 CREATE TABLE ORDERLIST(
     no number PRIMARY KEY,
     orderdate date ,
@@ -17,14 +20,17 @@ CREATE TABLE ORDERLIST(
     name VARCHAR2(30)
 );
 
+
+drop table adminlist;
+
 create table adminList(
-    no number PRIMARY KEY,
-    id varchar2(30) not null,
+    id varchar2(30) PRIMARY KEY,
     pw varchar2(30) not null,
-    state varchar2(6) NOT NULL CHECK(state in('활동','중지'))
+    state varchar2(6) NOT NULL CHECK(state in('활동', '대기' ,'중지'))
 );
 
 
- insert into adminList values((select nvl(max(no), 0) + 1 from adminList), 'admin', '12345','활동');
+ insert into adminList values('admin', '12345','활동');
+ insert into adminList values('admin2', '12345','대기');
 
  commit;

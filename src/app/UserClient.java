@@ -368,11 +368,13 @@ public class UserClient extends JFrame implements ActionListener {
             sstr = "160|" + startDate + "|" + endDate + "|" + orderDate;
             db_call.queryString(sstr);
 
-            for (int i = 0; i < la_day.length; i++) {
+            for (int i = 0; i < 31; i++) {
                 la_menu[i].setText(db_call.ht100.get(i));
                 // la_menu[i].setText(db_call.arr100[i]);
                 la_sum[i].setText(db_call.orderCnt130[i] + "");
             }
+
+            System.out.println(db_call.orderCnt130.length);
 
             // 오늘날짜 서식 적용
             boolean b1 = yearCombo.getSelectedItem().toString().trim().equals(today_year + "");

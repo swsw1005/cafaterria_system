@@ -145,7 +145,8 @@ public class Db {
                     int date131 = Integer.parseInt(token.nextToken());
                     int d130131 = date131 - date130;
 
-                    for (int i = 0; i < d130131; i++) {
+                    // for (int i = 0; i < d130131 + 1; i++) {
+                    for (int i = 0; i < 31; i++) {
 
                         String date_temp = (date130 + i) + "";
 
@@ -200,7 +201,8 @@ public class Db {
 
                     int d160161 = date161 - date160;
 
-                    for (int i = 0; i < d160161; i++) {
+                    for (int i = 0; i < d160161 + 1; i++) {
+                        // for (int i = 0; i < 31; i++) {
 
                         String date_temp = (date160 + i) + "";
 
